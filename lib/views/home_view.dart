@@ -1,4 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audios_player/widgets/custom_text.dart';
+
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -81,15 +83,10 @@ class _HomeViewState extends State<HomeView> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              assetsAudioPlayer.getCurrentAudioTitle == ''
+                            CustomText(
+                              title:   assetsAudioPlayer.getCurrentAudioTitle == ''
                                   ? 'Please Play Your Songs'
                                   : assetsAudioPlayer.getCurrentAudioTitle,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                              ),
                             ),
                             const SizedBox(
                               height: 25,
@@ -110,25 +107,7 @@ class _HomeViewState extends State<HomeView> {
                                           ? Colors.grey
                                           : Colors.purple[100],
                                     )),
-                                assetsAudioPlayer.builderIsPlaying(
-                                    builder: (context, isPlaying) {
-                                  return FloatingActionButton.large(
-                                    onPressed: () {
-                                      isPlaying
-                                          ? assetsAudioPlayer.pause()
-                                          : assetsAudioPlayer.play();
-                                      setState(() {});
-                                    },
-                                    shape: const CircleBorder(),
-                                    child: Icon(
-                                      isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow,
-                                      size: 70,
-                                      color: Colors.white,
-                                    ),
-                                  );
-                                }),
+                                builderIsPlaying(),
                                 IconButton(
                                     onPressed: snapShots.data?.current?.index ==
                                             (assetsAudioPlayer.playlist?.audios
@@ -171,12 +150,8 @@ class _HomeViewState extends State<HomeView> {
                             const SizedBox(
                               height: 25,
                             ),
-                            Text(
-                              '${convertSeconds(snapShots.data?.currentPosition.inSeconds ?? 0)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
+                            CustomText(
+                                title:  '${convertSeconds(snapShots.data?.currentPosition.inSeconds ?? 0)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
                             ),
                           ],
                         ),
@@ -192,9 +167,33 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  PlayerBuilder builderIsPlaying() {
+    return assetsAudioPlayer.builderIsPlaying(
+                                  builder: (context, isPlaying) {
+                                return FloatingActionButton.large(
+                                  onPressed: () {
+                                    isPlaying
+                                        ? assetsAudioPlayer.pause()
+                                        : assetsAudioPlayer.play();
+                                    setState(() {});
+                                  },
+                                  shape: const CircleBorder(),
+                                  child: Icon(
+                                    isPlaying
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+                                    size: 70,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              });
+  }
+
   String convertSeconds(int seconds) {
     String minutes = (seconds ~/ 60).toString();
     String secondsTimer = (seconds % 60).toString();
     return '${minutes.padLeft(2, '0')}:${secondsTimer.padLeft(2, '0')}';
   }
 }
+
+
