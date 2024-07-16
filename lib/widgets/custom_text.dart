@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class CustomText extends StatelessWidget {
   final String title;
+  final FontWeight? fontWeight;
   const CustomText({
     super.key,
     required this.title,
+    required this.fontWeight,
   });
 
 
@@ -14,10 +16,10 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
     title,
-      style: const TextStyle(
+      style:  TextStyle(
         color: Colors.white,
         fontSize: 20,
-        fontWeight: FontWeight.w800,
+        fontWeight:fontWeight ,
       ),
     );
   }

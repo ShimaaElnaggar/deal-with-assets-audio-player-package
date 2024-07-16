@@ -12,8 +12,9 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final assetsAudioPlayer = AssetsAudioPlayer();
-  int currentValue = 0 ;
-  double volumeValue = 1.0 ;
+  int currentValue = 0;
+  double volumeValue = 1.0;
+  double speedValue = 1.0;
   @override
   void initState() {
     initPlayer();
@@ -21,10 +22,13 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void initPlayer() async {
-    assetsAudioPlayer.volume.listen((event)=> volumeValue = event );
-    assetsAudioPlayer.currentPosition.listen((event)=> currentValue = event.inSeconds);
+    assetsAudioPlayer.playSpeed.listen((event) => speedValue = event);
+    assetsAudioPlayer.volume.listen((event) => volumeValue = event);
+    assetsAudioPlayer.currentPosition
+        .listen((event) => currentValue = event.inSeconds);
     await assetsAudioPlayer.open(
-     // volume: volumeValue,
+      // volume: volumeValue,
+      // playSpeed: speedValue,
       autoStart: false,
       loopMode: LoopMode.playlist,
       Playlist(
@@ -66,7 +70,7 @@ class _HomeViewState extends State<HomeView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: 400,
+                height: 600,
                 width: 400,
                 decoration: BoxDecoration(
                   color: Colors.purple,
@@ -88,9 +92,11 @@ class _HomeViewState extends State<HomeView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomText(
-                              title:   assetsAudioPlayer.getCurrentAudioTitle == ''
-                                  ? 'Please Play Your Songs'
-                                  : assetsAudioPlayer.getCurrentAudioTitle,
+                              fontWeight: FontWeight.w800,
+                              title:
+                                  assetsAudioPlayer.getCurrentAudioTitle == ''
+                                      ? 'Please Play Your Songs'
+                                      : assetsAudioPlayer.getCurrentAudioTitle,
                             ),
                             const SizedBox(
                               height: 25,
@@ -137,34 +143,80 @@ class _HomeViewState extends State<HomeView> {
                             const SizedBox(
                               height: 25,
                             ),
-                            Row(
-                              mainAxisAlignment : MainAxisAlignment.center,
+                            Column(
                               children: [
-                                SegmentedButton(
-                                  onSelectionChanged:(values){
-                                    volumeValue = values.first.toDouble();
-                                    assetsAudioPlayer.setVolume(volumeValue);
-                                    setState(() {
-
-                                    });
-                                  },
-                                    segments: const [
-                                      ButtonSegment(
-                                       icon: Icon(Icons.volume_up),
-                                          value: 1,
-                                      ),
-                                      ButtonSegment(
-                                        icon: Icon(Icons.volume_down),
-                                        value: 0.5,
-                                      ),
-                                      ButtonSegment(
-                                        icon: Icon(Icons.volume_mute),
-                                        value: 0,
-                                      ),
-                                    ],
-                                    selected: {
-                                      volumeValue,
-                                    }
+                                const CustomText(
+                                  title: 'Volume',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SegmentedButton(
+                                        onSelectionChanged: (values) {
+                                          volumeValue = values.first.toDouble();
+                                          assetsAudioPlayer
+                                              .setVolume(volumeValue);
+                                          setState(() {});
+                                        },
+                                        segments: const [
+                                          ButtonSegment(
+                                            icon: Icon(Icons.volume_up),
+                                            value: 1,
+                                          ),
+                                          ButtonSegment(
+                                            icon: Icon(Icons.volume_down),
+                                            value: 0.5,
+                                          ),
+                                          ButtonSegment(
+                                            icon: Icon(Icons.volume_mute),
+                                            value: 0,
+                                          ),
+                                        ],
+                                        selected: {
+                                          volumeValue,
+                                        }),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                const CustomText(
+                                  title: 'Speed',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SegmentedButton(
+                                        onSelectionChanged: (values) {
+                                          speedValue = values.first.toDouble();
+                                          assetsAudioPlayer
+                                              .setPlaySpeed(speedValue);
+                                          setState(() {});
+                                        },
+                                        segments: const [
+                                          ButtonSegment(
+                                            icon: Text('1x'),
+                                            value: 1,
+                                          ),
+                                          ButtonSegment(
+                                            icon: Text('2x'),
+                                            value: 8,
+                                          ),
+                                          ButtonSegment(
+                                            icon: Text('3x'),
+                                            value: 10,
+                                          ),
+                                          ButtonSegment(
+                                            icon: Text('4x'),
+                                            value: 16,
+                                          ),
+                                        ],
+                                        selected: {
+                                          speedValue,
+                                        }),
+                                  ],
                                 ),
                               ],
                             ),
@@ -179,7 +231,7 @@ class _HomeViewState extends State<HomeView> {
                                   currentValue = value.toInt();
                                 });
                               },
-                              onChangeEnd: (value){
+                              onChangeEnd: (value) {
                                 assetsAudioPlayer
                                     .seek(Duration(seconds: value.toInt()));
                               },
@@ -188,7 +240,9 @@ class _HomeViewState extends State<HomeView> {
                               height: 25,
                             ),
                             CustomText(
-                                title:  '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
+                              fontWeight: FontWeight.w400,
+                              title:
+                                  '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
                             ),
                           ],
                         ),
@@ -205,25 +259,20 @@ class _HomeViewState extends State<HomeView> {
   }
 
   PlayerBuilder builderIsPlaying() {
-    return assetsAudioPlayer.builderIsPlaying(
-                                  builder: (context, isPlaying) {
-                                return FloatingActionButton.large(
-                                  onPressed: () {
-                                    isPlaying
-                                        ? assetsAudioPlayer.pause()
-                                        : assetsAudioPlayer.play();
-                                    setState(() {});
-                                  },
-                                  shape: const CircleBorder(),
-                                  child: Icon(
-                                    isPlaying
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-                                    size: 70,
-                                    color: Colors.white,
-                                  ),
-                                );
-                              });
+    return assetsAudioPlayer.builderIsPlaying(builder: (context, isPlaying) {
+      return FloatingActionButton.large(
+        onPressed: () {
+          isPlaying ? assetsAudioPlayer.pause() : assetsAudioPlayer.play();
+          setState(() {});
+        },
+        shape: const CircleBorder(),
+        child: Icon(
+          isPlaying ? Icons.pause : Icons.play_arrow,
+          size: 70,
+          color: Colors.white,
+        ),
+      );
+    });
   }
 
   String convertSeconds(int seconds) {
@@ -232,5 +281,3 @@ class _HomeViewState extends State<HomeView> {
     return '${minutes.padLeft(2, '0')}:${secondsTimer.padLeft(2, '0')}';
   }
 }
-
-
