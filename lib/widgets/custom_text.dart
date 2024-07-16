@@ -10,8 +10,6 @@ class CustomText extends StatelessWidget {
     required this.fontWeight,
   });
 
-
-
   @override
   Widget build(BuildContext context) {
     return Text(
