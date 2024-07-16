@@ -13,6 +13,7 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final assetsAudioPlayer = AssetsAudioPlayer();
   int currentValue = 0 ;
+  double volumeValue = 1.0 ;
   @override
   void initState() {
     initPlayer();
@@ -20,8 +21,10 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void initPlayer() async {
+    assetsAudioPlayer.volume.listen((event)=> volumeValue = event );
     assetsAudioPlayer.currentPosition.listen((event)=> currentValue = event.inSeconds);
     await assetsAudioPlayer.open(
+     // volume: volumeValue,
       autoStart: false,
       loopMode: LoopMode.playlist,
       Playlist(
@@ -133,6 +136,37 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             const SizedBox(
                               height: 25,
+                            ),
+                            Row(
+                              mainAxisAlignment : MainAxisAlignment.center,
+                              children: [
+                                SegmentedButton(
+                                  onSelectionChanged:(values){
+                                    volumeValue = values.first.toDouble();
+                                    assetsAudioPlayer.setVolume(volumeValue);
+                                    setState(() {
+
+                                    });
+                                  },
+                                    segments: const [
+                                      ButtonSegment(
+                                       icon: Icon(Icons.volume_up),
+                                          value: 1,
+                                      ),
+                                      ButtonSegment(
+                                        icon: Icon(Icons.volume_down),
+                                        value: 0.5,
+                                      ),
+                                      ButtonSegment(
+                                        icon: Icon(Icons.volume_mute),
+                                        value: 0,
+                                      ),
+                                    ],
+                                    selected: {
+                                      volumeValue,
+                                    }
+                                ),
+                              ],
                             ),
                             Slider(
                               value: currentValue.toDouble(),
