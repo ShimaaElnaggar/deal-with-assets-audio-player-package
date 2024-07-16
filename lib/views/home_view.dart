@@ -12,7 +12,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final assetsAudioPlayer = AssetsAudioPlayer();
-
+  int currentValue = 0 ;
   @override
   void initState() {
     initPlayer();
@@ -20,6 +20,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void initPlayer() async {
+    assetsAudioPlayer.currentPosition.listen((event)=> currentValue = event.inSeconds);
     await assetsAudioPlayer.open(
       autoStart: false,
       loopMode: LoopMode.playlist,
@@ -134,24 +135,26 @@ class _HomeViewState extends State<HomeView> {
                               height: 25,
                             ),
                             Slider(
-                              value: snapShots.data?.currentPosition.inSeconds
-                                      .toDouble() ??
-                                  0.0,
+                              value: currentValue.toDouble(),
                               min: 0,
                               max: snapShots.data?.duration.inSeconds
                                       .toDouble() ??
                                   0.0,
                               onChanged: (value) {
+                                setState(() {
+                                  currentValue = value.toInt();
+                                });
+                              },
+                              onChangeEnd: (value){
                                 assetsAudioPlayer
                                     .seek(Duration(seconds: value.toInt()));
-                                // work on physical device but web does not.
                               },
                             ),
                             const SizedBox(
                               height: 25,
                             ),
                             CustomText(
-                                title:  '${convertSeconds(snapShots.data?.currentPosition.inSeconds ?? 0)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
+                                title:  '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
                             ),
                           ],
                         ),
