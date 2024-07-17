@@ -78,11 +78,11 @@ class _AudioPlayerState extends State<AudioPlayer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           buildImageCard(),
                           const SizedBox(
-                            height: 25,
+                            height: 20,
                           ),
                           CustomText(
                             fontWeight: FontWeight.w800,
@@ -91,7 +91,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                 : assetsAudioPlayer.getCurrentAudioTitle,
                           ),
                           const SizedBox(
-                            height: 25,
+                            height: 20,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -132,7 +132,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                             ],
                           ),
                           const SizedBox(
-                            height: 25,
+                            height: 20,
                           ),
                           buildSlider(snapShots),
                           Column(
@@ -175,7 +175,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                 ],
                               ),
                               const SizedBox(
-                                height: 25,
+                                height: 20,
                               ),
                               Row(
                                 mainAxisAlignment:
