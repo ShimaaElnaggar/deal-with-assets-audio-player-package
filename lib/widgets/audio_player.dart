@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:audios_player/widgets/custom_segment_button.dart';
 import 'package:audios_player/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
@@ -44,17 +45,25 @@ class _AudioPlayerState extends State<AudioPlayer> {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 600,
-              width: 400,
-              decoration: BoxDecoration(
-                color: Colors.purple,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              colors: [
+                Colors.white,
+                const Color(0xffE3ebf6),
+                Colors.red.shade100,
+                const Color(0xffd3d9e1),
+                Colors.white,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
                 child: StreamBuilder(
                   stream: assetsAudioPlayer.realtimePlayingInfos,
                   builder: (context, snapShots) {
@@ -68,6 +77,13 @@ class _AudioPlayerState extends State<AudioPlayer> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          buildImageCard(),
+                          const SizedBox(
+                            height: 25,
+                          ),
                           CustomText(
                             fontWeight: FontWeight.w800,
                             title: assetsAudioPlayer.getCurrentAudioTitle == ''
@@ -78,7 +94,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                             height: 25,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               IconButton(
                                   onPressed: snapShots.data?.current?.index == 0
@@ -90,7 +106,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                     Icons.skip_previous,
                                     color: snapShots.data?.current?.index == 0
                                         ? Colors.grey
-                                        : Colors.purple[100],
+                                        : Colors.red[200],
                                   )),
                               builderIsPlaying(),
                               IconButton(
@@ -111,67 +127,74 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                                     0) -
                                                 1
                                         ? Colors.grey
-                                        : Colors.purple[200],
+                                        : Colors.red[200],
                                   )),
                             ],
                           ),
                           const SizedBox(
                             height: 25,
                           ),
+                          buildSlider(snapShots),
                           Column(
                             children: [
-                              const CustomText(
-                                title: 'Volume',
-                                fontWeight: FontWeight.w400,
-                              ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  SegmentedButton(
-                                      onSelectionChanged: (values) {
-                                        volumeValue = values.first.toDouble();
-                                        assetsAudioPlayer
-                                            .setVolume(volumeValue);
-                                        setState(() {});
-                                      },
-                                      segments: const [
-                                        ButtonSegment(
-                                          icon: Icon(Icons.volume_up),
-                                          value: 1,
+                                  const CustomText(
+                                    title: 'Volume',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  CustomSegmentButton(
+                                    onSelectionChanged: volumeOnChanced,
+                                    selected: {volumeValue},
+                                    segments: const [
+                                      ButtonSegment(
+                                        icon: Icon(
+                                          Icons.volume_up,
+                                          color: Colors.white,
                                         ),
-                                        ButtonSegment(
-                                          icon: Icon(Icons.volume_down),
-                                          value: 0.5,
+                                        value: 1,
+                                      ),
+                                      ButtonSegment(
+                                        icon: Icon(
+                                          Icons.volume_down,
+                                          color: Colors.white,
                                         ),
-                                        ButtonSegment(
-                                          icon: Icon(Icons.volume_mute),
-                                          value: 0,
+                                        value: 0.5,
+                                      ),
+                                      ButtonSegment(
+                                        icon: Icon(
+                                          Icons.volume_mute,
+                                          color: Colors.white,
                                         ),
-                                      ],
-                                      selected: {
-                                        volumeValue,
-                                      }),
+                                        value: 0,
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                               const SizedBox(
                                 height: 25,
                               ),
-                              const CustomText(
-                                title: 'Speed',
-                                fontWeight: FontWeight.w400,
-                              ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  SegmentedButton(
-                                      onSelectionChanged: (values) {
-                                        speedValue = values.first.toDouble();
-                                        assetsAudioPlayer
-                                            .setPlaySpeed(speedValue);
-                                        setState(() {});
+                                  const CustomText(
+                                    title: 'Speed',
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  SizedBox(
+                                    width: 250,
+                                    child: CustomSegmentButton(
+                                      onSelectionChanged: speedOnChange,
+                                      selected: {
+                                        speedValue,
                                       },
                                       segments: const [
                                         ButtonSegment(
+
                                           icon: Text('1x'),
                                           value: 1,
                                         ),
@@ -188,34 +211,17 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                           value: 16,
                                         ),
                                       ],
-                                      selected: {
-                                        speedValue,
-                                      }),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
-                          ),
-                          Slider(
-                            value: currentValue.toDouble(),
-                            min: 0,
-                            max:
-                                snapShots.data?.duration.inSeconds.toDouble() ??
-                                    0.0,
-                            onChanged: (value) {
-                              setState(() {
-                                currentValue = value.toInt();
-                              });
-                            },
-                            onChangeEnd: (value) {
-                              assetsAudioPlayer
-                                  .seek(Duration(seconds: value.toInt()));
-                            },
                           ),
                           const SizedBox(
                             height: 25,
                           ),
                           CustomText(
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w700,
                             title:
                                 '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
                           ),
@@ -225,16 +231,60 @@ class _AudioPlayerState extends State<AudioPlayer> {
                   },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void speedOnChange(values) {
+    speedValue = values.first.toDouble();
+    assetsAudioPlayer.setPlaySpeed(speedValue);
+    setState(() {});
+  }
+
+  void volumeOnChanced(values) {
+    volumeValue = values.first.toDouble();
+    assetsAudioPlayer.setVolume(volumeValue);
+    setState(() {});
+  }
+
+  Slider buildSlider(AsyncSnapshot<RealtimePlayingInfos> snapShots) {
+    return Slider(
+      thumbColor: Colors.red[100],
+      activeColor: const Color(0xffE3ebf6),
+      value: currentValue.toDouble(),
+      min: 0,
+      max: snapShots.data?.duration.inSeconds.toDouble() ?? 0.0,
+      onChanged: (value) {
+        setState(() {
+          currentValue = value.toInt();
+        });
+      },
+      onChangeEnd: (value) {
+        assetsAudioPlayer.seek(Duration(seconds: value.toInt()));
+      },
+    );
+  }
+
+  Card buildImageCard() {
+    return Card(
+      shape: Border.all(color: Colors.red.shade100),
+      child: Image.network(
+        assetsAudioPlayer.getCurrentAudioImage?.path ??
+            'https://yt3.ggpht.com/a/AATXAJwUMA9ikCxNMBZhei9jS5lfnNOZCK49CUn2YWFgeQ=s900-c-k-c0xffffffff-no-rj-mo',
+        width: 180,
+        height: 180,
+        fit: BoxFit.cover,
       ),
     );
   }
 
   PlayerBuilder builderIsPlaying() {
     return assetsAudioPlayer.builderIsPlaying(builder: (context, isPlaying) {
-      return FloatingActionButton.large(
+      return FloatingActionButton(
+        backgroundColor: isPlaying ? const Color(0xffE3ebf6) : Colors.red[100],
         onPressed: () {
           isPlaying ? assetsAudioPlayer.pause() : assetsAudioPlayer.play();
           setState(() {});
@@ -242,7 +292,7 @@ class _AudioPlayerState extends State<AudioPlayer> {
         shape: const CircleBorder(),
         child: Icon(
           isPlaying ? Icons.pause : Icons.play_arrow,
-          size: 70,
+          size: 30,
           color: Colors.white,
         ),
       );

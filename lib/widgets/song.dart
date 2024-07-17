@@ -35,17 +35,22 @@ class _SongState extends State<Song> {
           if(snapshots.data == null){
             return const SizedBox.shrink();
           }
-          return Text(convertSeconds(snapshots.data?.duration.inSeconds??0));
+          return Text(convertSeconds(snapshots.data?.duration.inSeconds??0), style: TextStyle(color: Colors.blue[200]),);
         },
       ),
-      leading: CircleAvatar(
-        child: Text(
-          "${widget.audio.metas.artist?.split(' ').first[0].toUpperCase()}${widget.audio.metas.artist?.split(' ').last[0].toUpperCase()}",
-          style: const TextStyle(fontSize: 18),
+      leading: Card(
+        shape: Border.all(color: Colors.red.shade100),
+        borderOnForeground: true,
+        child: Image.network(
+          widget.audio.metas.image?.path ??
+              'https://yt3.ggpht.com/a/AATXAJwUMA9ikCxNMBZhei9jS5lfnNOZCK49CUn2YWFgeQ=s900-c-k-c0xffffffff-no-rj-mo',
+          width: 80,
+          height: 80,
+          fit: BoxFit.cover,
         ),
       ),
-      title: Text(widget.audio.metas.title ?? 'No Title'),
-      subtitle: Text(widget.audio.metas.artist ?? 'No Artist'),
+      title: Text(widget.audio.metas.title ?? 'No Title',style: TextStyle(color: Colors.red.shade200),),
+      subtitle: Text(widget.audio.metas.artist ?? 'No Artist',style: TextStyle(color: Colors.blue[200]),),
     );
   }
   String convertSeconds(int seconds) {

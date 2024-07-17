@@ -15,13 +15,33 @@ class _PlaylistViewState extends State<PlaylistView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PlayList'),
+        title: Center(
+          child: Text(
+            'PlayList',
+            style: TextStyle(color: Colors.red[100],fontWeight: FontWeight.w800),
+          ),
+        ),
       ),
-      body: ListView(
-        children: [
-          for (var song in widget.playlist.audios)
-           Song(audio: song),
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              const Color(0xffE3ebf6),
+              Colors.red.shade100,
+              const Color(0xffd3d9e1),
+              Colors.white,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: ListView(
+          children: [
+            for (var song in widget.playlist.audios) Song(audio: song),
+          ],
+        ),
       ),
     );
   }
