@@ -1,6 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:audios_player/widgets/custom_segment_button.dart';
-import 'package:audios_player/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 
 class AudioPlayer extends StatefulWidget {
@@ -84,11 +83,13 @@ class _AudioPlayerState extends State<AudioPlayer> {
                           const SizedBox(
                             height: 20,
                           ),
-                          CustomText(
-                            fontWeight: FontWeight.w800,
-                            title: assetsAudioPlayer.getCurrentAudioTitle == ''
+                          Text(
+                            assetsAudioPlayer.getCurrentAudioTitle == ''
                                 ? 'Please Play Your Songs'
                                 : assetsAudioPlayer.getCurrentAudioTitle,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                           const SizedBox(
                             height: 20,
@@ -141,9 +142,11 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  const CustomText(
-                                    title: 'Volume',
-                                    fontWeight: FontWeight.w400,
+                                  const Text(
+                                    'Volume',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                   CustomSegmentButton(
                                     onSelectionChanged: volumeOnChanced,
@@ -181,9 +184,11 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  const CustomText(
-                                    title: 'Speed',
-                                    fontWeight: FontWeight.w400,
+                                  const Text(
+                                    'Speed',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 250,
@@ -194,7 +199,6 @@ class _AudioPlayerState extends State<AudioPlayer> {
                                       },
                                       segments: const [
                                         ButtonSegment(
-
                                           icon: Text('1x'),
                                           value: 1,
                                         ),
@@ -220,10 +224,11 @@ class _AudioPlayerState extends State<AudioPlayer> {
                           const SizedBox(
                             height: 25,
                           ),
-                          CustomText(
-                            fontWeight: FontWeight.w700,
-                            title:
-                                '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
+                          Text(
+                            '${convertSeconds(currentValue)} / ${convertSeconds(snapShots.data?.duration.inSeconds ?? 0)}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ],
                       ),

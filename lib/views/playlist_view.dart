@@ -11,6 +11,15 @@ class PlaylistView extends StatefulWidget {
 }
 
 class _PlaylistViewState extends State<PlaylistView> {
+  Audio? currentlyPlayingSong;
+  final assetsAudioPlayer = AssetsAudioPlayer();
+  void selectSong(Audio song) {
+    if (currentlyPlayingSong != null && currentlyPlayingSong != song) {
+      assetsAudioPlayer.stop();
+    }
+    currentlyPlayingSong = song;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +27,8 @@ class _PlaylistViewState extends State<PlaylistView> {
         title: Center(
           child: Text(
             'PlayList',
-            style: TextStyle(color: Colors.red[100],fontWeight: FontWeight.w800),
+            style:
+                TextStyle(color: Colors.red[100], fontWeight: FontWeight.w800),
           ),
         ),
       ),
@@ -37,10 +47,13 @@ class _PlaylistViewState extends State<PlaylistView> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: ListView(
-          children: [
-            for (var song in widget.playlist.audios) Song(audio: song),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            children: [
+              for (var song in widget.playlist.audios) Song(audio: song),
+            ],
+          ),
         ),
       ),
     );
